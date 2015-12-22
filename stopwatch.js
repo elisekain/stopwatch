@@ -1,3 +1,6 @@
+$(document).ready(function() {
+
+});
 // Timer tracks minutes, seconds, hundreds.
 // Switches to hour, minutes, second after 60 min.
 // Start button
