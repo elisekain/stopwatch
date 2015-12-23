@@ -7,23 +7,26 @@ document.addEventListener('DOMContentLoaded', function(){
   var start;
 
   // Add prefix "0" if less than 10
-  var addZero = function(i) {
-    if (i < 10) {
-      i = "0" + i;
+  var addZeroes = function(value) {
+    if (value < 10) {
+      value = "0" + value;
     }
-    return i;
+    return value;
   }
 
   // Update Time Function
   var updateTime = function () {
     timerID = setInterval(function() {
       var time = new Date();
-      timeElapsed = Math.floor((time - start) / 10);
-      console.log(timeElapsed.type);
-      var minutes = addZero();
-      var seconds = addZero();
-      var tenths = addZero();
-      timer.innerHTML = "<h2>" + timeElapsed + "</h2>";
+      timeElapsed = time - start;
+      hours = Math.floor((timeElapsed / 1000 / 60 / 60) % 60);
+      minutes = Math.floor((timeElapsed / 1000 / 60) % 60);
+      seconds = Math.floor((timeElapsed / 1000) % 60);
+      tenths = Math.floor((timeElapsed / 10) % 100);
+      minutes = addZeroes(minutes);
+      seconds = addZeroes(seconds);
+      tenths = addZeroes(tenths);
+      timer.innerHTML = "<h2>" + minutes + ":" + seconds + ":" + tenths + "</h2>";
     }, 10);
   }
 
