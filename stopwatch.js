@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', function(){
 
   var timer = document.getElementById("timer");
-  var rightButton = document.getElementById("right");
   var leftButton = document.getElementById("left");
-  var timerID = null;
-  var start;
+  var rightButton = document.getElementById("right");
+  var timerID;
+  var startTime;
+  var savedTime = 0;
 
   // Add prefix "0" if less than 10
   var addZeroes = function(value) {
@@ -15,14 +16,16 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   // Update Time Function
-  var updateTime = function () {
+  var updateTime = function (prevSavedTime) {
     timerID = setInterval(function() {
-      var time = new Date();
-      timeElapsed = time - start;
-      hours = Math.floor((timeElapsed / 1000 / 60 / 60) % 60);
-      minutes = Math.floor((timeElapsed / 1000 / 60) % 60);
-      seconds = Math.floor((timeElapsed / 1000) % 60);
-      tenths = Math.floor((timeElapsed / 10) % 100);
+      var timeNow = new Date();
+      timeElapsed = timeNow - startTime;
+      savedTime = timeElapsed + prevSavedTime;
+      hours = Math.floor((savedTime / 1000 / 60 / 60) % 60);
+      minutes = Math.floor((savedTime / 1000 / 60) % 60);
+      seconds = Math.floor((savedTime / 1000) % 60);
+      tenths = Math.floor((savedTime / 10) % 100);
+      hours = addZeroes(hours);
       minutes = addZeroes(minutes);
       seconds = addZeroes(seconds);
       tenths = addZeroes(tenths);
@@ -36,18 +39,25 @@ document.addEventListener('DOMContentLoaded', function(){
 
   // Start Button Event
   rightButton.addEventListener("click", function(){
-    if (!timerID) {
-      start = Date.now();
-      updateTime();
+    if (!timerID && !startTime) {
+      startTime = Date.now();
+      updateTime(savedTime);
       switchText(rightButton, "Stop");
-    } else if (timerID) {
+      switchText(leftButton, "Lap");
+    } else if (timerID && startTime) {
       clearInterval(timerID);
       timerID = null;
+      startTime = null;
       switchText(rightButton, "Start");
+      switchText(leftButton, "Reset");
     }
   });
 
   leftButton.addEventListener("click", function(){
+    timerID = null;
+    startTime = null;
+    savedTime = 0;
+    timer.innerHTML = "<h2>00:00:00</h2>";
   });
 
 
