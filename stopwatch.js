@@ -1,16 +1,12 @@
 document.addEventListener('DOMContentLoaded', function(){
-
   var timer = document.getElementById("timer");
   var lapTimer = document.getElementById("lapTimer");
   var lapTable = document.getElementById("lapTable");
-  var leftButton = document.getElementById("left");
   var rightButton = document.getElementById("right");
-  var timerID;
-  var savedTime = 0;
-  var lapTimeStart = 0;
-  var lapNumber = 1;
+  var leftButton = document.getElementById("left");
+  var timerID, totalTime = 0, lapTimeStart = 0, lapNumber = 1;
 
-  // Add prefix "0" if less than 10
+  // Add prefix "0" if needed
   var addZeroes = function(value) {
     if (value < 10) {
       value = "0" + value;
@@ -32,63 +28,60 @@ document.addEventListener('DOMContentLoaded', function(){
     if (hours > 1) {
       var html = hours + ":" + minutes + ":" + seconds;
     } else {
-      var html = minutes + ":" + seconds + ":" + hundreths;
+      var html = minutes + ":" + seconds + "." + hundreths;
     }
     return html;
   }
 
-  // Update Time Function
   var updateTime = function (prevSavedTime) {
     timerID = setInterval(function() {
       // Main Timer
-      savedTime = (new Date() - startTime) + prevSavedTime;
-      timer.innerHTML = "<h2>" + formatTime(savedTime) + "</h2>";
+      totalTime = (new Date() - startTime) + prevSavedTime;
+      timer.innerHTML = "<h2>" + formatTime(totalTime) + "</h2>";
 
       // Lap Timer
-      var lapTime = savedTime - lapTimeStart;
+      var lapTime = totalTime - lapTimeStart;
       lapTimer.innerHTML = "<p>" + formatTime(lapTime) + "</p>";
     }, 10);
   }
 
-  var switchText = function(DOMelement, text) {
-    DOMelement.innerHTML = text;
-  }
-
   var startTimer = function() {
     startTime = Date.now();
-    updateTime(savedTime);
-    switchText(rightButton, "Stop");
-    switchText(leftButton, "Lap");
+    updateTime(totalTime);
+    leftButton.innerHTML = "Stop";
+    leftButton.setAttribute("class", "stop");
+    rightButton.innerHTML =  "Lap";
   }
 
   var stopTimer = function() {
     clearInterval(timerID);
     timerID = null;
     startTime = null;
-    switchText(rightButton, "Start");
-    switchText(leftButton, "Reset");
+    leftButton.innerHTML = "Start";
+    leftButton.setAttribute("class", "start");
+    rightButton.innerHTML =  "Reset";
   }
 
   var resetTimer = function() {
-    savedTime = 0;
+    totalTime = 0;
     lapNumber = 1;
     lapTimeStart = 0;
-    timer.innerHTML = "<h2>00:00:00</h2>";
-    lapTimer.innerHTML = "<p>00:00:00</p>";
+    timer.innerHTML = "<h2>00:00.00</h2>";
+    lapTimer.innerHTML = "<p>00:00.00</p>";
     lapTable.innerHTML = "";
   }
 
   var saveLap = function() {
-    var saveLap = savedTime - lapTimeStart;
+    var savedLap = totalTime - lapTimeStart;
     var newLapDisplay = document.createElement("p");
-    newLapDisplay.innerHTML = "Lap " + lapNumber + " " + formatTime(saveLap);
+    newLapDisplay.innerHTML = "<span class='lapNumber'>Lap " + lapNumber + " </span>" + formatTime(savedLap);
     lapTable.insertBefore(newLapDisplay, lapTable.childNodes[0]);
-    lapTimeStart = savedTime;
+    lapTimeStart = totalTime;
     lapNumber++;
   }
 
   // Event Listeners
-  rightButton.addEventListener("click", function(){
+  leftButton.addEventListener("click", function(){
     if (!timerID) {
       startTimer();
     } else {
@@ -96,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
-  leftButton.addEventListener("click", function(){
+  rightButton.addEventListener("click", function(){
     if (!timerID) {
       resetTimer();
     } else {
