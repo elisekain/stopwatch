@@ -15,20 +15,15 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   var formatTime = function(inputTime) {
-    var hours = Math.floor((inputTime / 1000 / 60 / 60) % 60);
-    var minutes = Math.floor((inputTime / 1000 / 60) % 60);
-    var seconds = Math.floor((inputTime / 1000) % 60);
-    var hundreths = Math.floor((inputTime / 10) % 100);
+    var hours = addZeroes(Math.floor((inputTime / 1000 / 60 / 60) % 24));
+    var minutes = addZeroes(Math.floor((inputTime / 1000 / 60) % 60));
+    var seconds = addZeroes(Math.floor((inputTime / 1000) % 60));
+    var millis = addZeroes(Math.floor((inputTime / 10) % 100));
 
-    hours = addZeroes(hours);
-    minutes = addZeroes(minutes);
-    seconds = addZeroes(seconds);
-    hundreths = addZeroes(hundreths);
-
-    if (hours > 1) {
+    if (hours > 0) {
       var html = hours + ":" + minutes + ":" + seconds;
     } else {
-      var html = minutes + ":" + seconds + "." + hundreths;
+      var html = minutes + ":" + seconds + "." + millis;
     }
     return html;
   }
